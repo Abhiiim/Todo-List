@@ -75,7 +75,7 @@ input {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(64 203 133 / 59%);
+    background-color: rgba(184, 235, 241, 0.59);
     width: fit-content;
     border-radius: 5px;
     border: 0.5px solid black;
