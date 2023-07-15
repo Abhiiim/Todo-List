@@ -5,13 +5,15 @@ html, body {
 .container {
     width: 1000px;
     height: fit-content;
-    background-color: rgb(99 219 185 / 36%);
+    /* background-color: rgb(99 219 185 / 36%); */
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 20px auto;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), 
+                -2px -2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .add-work {
@@ -54,8 +56,10 @@ input {
     padding: 20px;
     background-color: #fff;
     margin-bottom: 20px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 5px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+                -2px -2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .list {
@@ -119,8 +123,10 @@ input {
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     margin-bottom: 20px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+                -2px -2px 4px rgba(0, 0, 0, 0.3);
 }
 
 
