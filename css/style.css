@@ -18,20 +18,59 @@ html, body {
 
 .add-work {
     width: 100%;
-    height: 40px;
     margin: 20px;
     display: flex;
     align-items: center;
     justify-content: space-around;
 }
 
-input {
+.add-work form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.work-input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
     color: #333;
     width: 400px;
+}
+
+.category {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-option {
+    box-sizing: border-box;
+    width: 300px;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.due-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+  
+.date-picker {
+    box-sizing: border-box;
+    width: 300px;
+    height: 40px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
 }
 
 .btn {
@@ -116,17 +155,9 @@ input {
     margin: 5px;
 }
 
-.api-list {
-    height: 400px;
-    overflow: auto;
-    position: relative;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    /* border: 1px solid black; */
-    margin-bottom: 20px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
-                -2px -2px 4px rgba(0, 0, 0, 0.3);
+.para-options {
+    font-size: 12px;
+    padding-left: 10px;
+    padding-bottom: 10px;
 }
-
 

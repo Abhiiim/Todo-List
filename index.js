@@ -1,6 +1,50 @@
-var task_id = 201;
-var tasks = [];
-var apiData = [];
+// Creating a paragraph element for the title of the task
+function addPara(newItem, task) {
+    let paraDiv = document.createElement("div");
+
+    let taskTitle = document.createElement("p");
+    taskTitle.innerText = task.title;
+    paraDiv.appendChild(taskTitle);
+    newItem.appendChild(paraDiv);
+
+    let taskCategory = document.createElement("div");
+    taskCategory.innerText = task.category + " | " + task.due_date + " | " + task.priority;
+    taskCategory.classList.add("para-options");
+    paraDiv.appendChild(taskCategory);
+    newItem.appendChild(paraDiv);
+}
+
+// Creating a edit button for editing the title of a task
+function editButton (newItem, taskId) {
+    let editBtn = document.createElement("button");
+    editBtn.innerHTML = "Edit";
+    editBtn.id = taskId;
+    editBtn.classList.add("edit-btn");
+    editBtn.addEventListener("click", function () {
+        editItem(this);
+    })
+    newItem.appendChild(editBtn);
+}
+
+// Creating a delete button for deleting a particular task
+function deleteButton (newItem, taskId) {
+    let deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", function() {
+        deleteItem(this);
+    });
+    deleteBtn.id = taskId;
+    newItem.appendChild(deleteBtn);
+}
+
+// Creating a checkbox for checking whether a particular task is complete or not
+function createCheckbox (newItem, taskId) {
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = taskId;
+    newItem.appendChild(checkbox);
+}
 
 // Function for rendering the html using the content stored inside the array
 function renderTasks (list, taskList) {
@@ -10,30 +54,10 @@ function renderTasks (list, taskList) {
         let newItem = document.createElement("div");
         newItem.classList.add("item")
 
-        // Creating a paragraph element for the title of the task
-        let newPara = document.createElement("p");
-        newPara.innerText = taskList[i].title;
-        newItem.appendChild(newPara);
-
-        // Creating a edit button for editing the title of a task
-        let editBtn = document.createElement("button");
-        editBtn.innerHTML = "Edit";
-        editBtn.id = taskList[i].id;
-        editBtn.classList.add("edit-btn");
-        editBtn.addEventListener("click", function () {
-            editItem(this);
-        })
-        newItem.appendChild(editBtn);
-
-        // Creating a delete button for deleting a particular task
-        let deleteBtn = document.createElement("button");
-        deleteBtn.innerHTML = "Delete";
-        deleteBtn.classList.add("delete-btn");
-        deleteBtn.addEventListener("click", function() {
-            deleteItem(this);
-        });
-        deleteBtn.id = taskList[i].id;
-        newItem.appendChild(deleteBtn);
+        createCheckbox (newItem, taskList[i].id);
+        addPara (newItem, taskList[i]);
+        editButton (newItem, taskList[i].id);
+        deleteButton (newItem, taskList[i].id);
 
         list.appendChild(newItem);
         document.getElementById("new-work").value = "";
@@ -43,29 +67,53 @@ function renderTasks (list, taskList) {
 // Function for adding a new element into the array and rerenders the whole html
 function addNewItem () {
     let newWork = document.getElementById("new-work").value;
-    if (newWork.trim() !== "") {
-        tasks.push({id: task_id, title: newWork});
-        task_id++;
+    let category = document.getElementById("category-option").value;
+    let due_date = document.getElementById("date-picker").value;
+    let priority = document.getElementById("priority-option").value;
+
+    if (newWork.trim() !== "" && category.trim() !== "" && due_date.trim() !=="" && priority.trim() != "") {
+
+        let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+        let taskId = localStorage.getItem("taskId");
+        if (taskId === null) taskId = 1;
+        taskId = parseInt(taskId);
+
+        taskItems.push({
+            id: taskId, 
+            title: newWork, 
+            category: category,
+            due_date: due_date,
+            priority: priority
+        });
+        taskId++;
+
+        // console.log(taskId);
+        // console.log(taskItems);
+
+        localStorage.setItem("tasks", JSON.stringify(taskItems));
+        localStorage.setItem("taskId", taskId.toString());
+
+        document.getElementById("category-option").value = "Category 1";
+        document.getElementById("date-picker").value = "";
+        document.getElementById("priority-option").value = "Low"
+
+        let list = document.getElementById('list');
+        list.innerHTML = "";
+        renderTasks(list, taskItems);
     }
-    let list = document.getElementById('list');
-    list.innerHTML = "";
-    renderTasks(list, tasks);
 }
 
 // Function for deleting a new element from the list and rerenders the whole html
 function deleteItem(btn) {
+    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
     let list = document.getElementById('list');
-    let apiList = document.getElementById('api-list');
+    
+    deleteFromArray(btn.id, taskItems);
 
-    if (btn.id <= 200) {
-        deleteFromArray(btn.id, apiData);
-        apiList.innerHTML = "";
-        renderTasks(apiList, apiData);
-    } else {
-        deleteFromArray(btn.id, tasks);
-        list.innerHTML = "";
-        renderTasks(list, tasks);
-    }
+    localStorage.setItem("tasks", JSON.stringify(taskItems));
+
+    list.innerHTML = "";
+    renderTasks(list, taskItems);
 }
 
 // Function for deleting a particular element from array using the id of that element
@@ -89,44 +137,20 @@ function editItem (btn) {
         btn.innerHTML = "Save";
         btn.style.backgroundColor = "#007bff";
     }
-    if (btn.id <= 200) {
-        for (let i=0; i<apiData.length; i++) {
-            if (apiData[i].id == btn.id) {
-                apiData[i].title = para.innerText;
-                break;
-            }
-        }
-    } else {
-        for (let i=0; i<tasks.length; i++) {
-            if (tasks[i].id == btn.id) {
-                tasks[i].title = para.innerText;
-                break;
-            }
+
+    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    for (let i=0; i<taskItems.length; i++) {
+        if (taskItems[i].id == btn.id) {
+            taskItems[i].title = para.innerText;
+            break;
         }
     }
 }
 
+// localStorage.clear();
 
-
-// Fetching Data from API
-
-fetch('https://jsonplaceholder.typicode.com/todos')
-    .then((response) => {
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        return response.json();
-    })
-    .then((data) => {
-        if (apiData.length === 0) {
-            apiData = data;
-            let apiList = document.getElementById("api-list");
-            renderTasks(apiList, data);
-        }
-    })
-    .catch ((error) => {
-        console.log("Error: ", error.message)
-    })
-
-
+let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+let list = document.getElementById('list');
+renderTasks(list, taskItems);
 

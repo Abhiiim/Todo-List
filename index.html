@@ -10,7 +10,30 @@
     <div class="container">
         <div class="add-work">
             <form action="">
-                <input type="text" placeholder="Add New Work" id="new-work" name="new-work">
+                <input class="work-input" type="text" placeholder="Add New Work" id="new-work" name="new-work">
+                <div class="category">
+                    <label for="category-option">Category:</label>
+                    <select id="category-option" class="category-option">
+                        <option value="Category 1">Category 1</option>
+                        <option value="Category 2">Category 2</option>
+                        <option value="Category 3">Category 3</option>
+                        <option value="Category 4">Category 4</option>
+                    </select>
+                </div>
+
+                <div class="due-date">
+                    <span class="date-label">Due Date:</span>
+                    <input type="date" id="date-picker" class="date-picker">
+                </div>
+
+                <div class="category">
+                    <label for="priority-option">Priority:</label>
+                    <select id="priority-option" class="category-option">
+                        <option value="Low">Low</option>
+                        <option value="High">High</option>
+                        <option value="Medium">medium</option>
+                    </select>
+                </div>
                 <button type="button" class="btn" id="add-btn" onclick="addNewItem()">Add Work</button>
             </form>
         </div>
@@ -19,11 +42,6 @@
             <div class="normal-list">
                 <div class="list" id="list"></div>
             </div>
-            <h2>API Todo</h2>
-            <div class="api-list">
-                <div class="list scroll" id="api-list"></div>
-            </div>
-            
         </div>
     </div>
 
