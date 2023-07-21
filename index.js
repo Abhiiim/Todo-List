@@ -4,6 +4,9 @@ function addPara(newItem, task) {
 
     let taskTitle = document.createElement("p");
     taskTitle.innerText = task.title;
+    if (task.isCompleted) {
+        taskTitle.style.textDecoration = "line-through";
+    }
     paraDiv.appendChild(taskTitle);
     newItem.appendChild(paraDiv);
 
@@ -39,10 +42,14 @@ function deleteButton (newItem, taskId) {
 }
 
 // Creating a checkbox for checking whether a particular task is complete or not
-function createCheckbox (newItem, taskId) {
+function createCheckbox (newItem, task) {
     let checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = taskId;
+    checkbox.id = task.id;
+    if (task.isCompleted) checkbox.checked = true;
+    checkbox.addEventListener("click", function() {
+        taskCompleted(this);
+    });
     newItem.appendChild(checkbox);
 }
 
@@ -54,7 +61,7 @@ function renderTasks (list, taskList) {
         let newItem = document.createElement("div");
         newItem.classList.add("item")
 
-        createCheckbox (newItem, taskList[i].id);
+        createCheckbox (newItem, taskList[i]);
         addPara (newItem, taskList[i]);
         editButton (newItem, taskList[i].id);
         deleteButton (newItem, taskList[i].id);
@@ -83,7 +90,8 @@ function addNewItem () {
             title: newWork, 
             category: category,
             due_date: due_date,
-            priority: priority
+            priority: priority, 
+            isCompleted: false
         });
         taskId++;
 
@@ -107,7 +115,7 @@ function addNewItem () {
 function deleteItem(btn) {
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
     let list = document.getElementById('list');
-    
+
     deleteFromArray(btn.id, taskItems);
 
     localStorage.setItem("tasks", JSON.stringify(taskItems));
@@ -146,6 +154,30 @@ function editItem (btn) {
             break;
         }
     }
+
+    localStorage.setItem("tasks", JSON.stringify(taskItems));
+}
+
+function taskCompleted (box) {
+    console.log(box.checked);
+    var prtDiv = box.parentNode;
+    var para = prtDiv.querySelector("p");
+    if (box.checked) {
+        para.style.textDecoration = "line-through";
+    } else {
+        para.style.textDecoration = "none";
+    }
+
+    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    for (let i=0; i<taskItems.length; i++) {
+        if (taskItems[i].id == box.id) {
+            taskItems[i].isCompleted = !taskItems[i].isCompleted;
+            break;
+        }
+    }
+
+    localStorage.setItem("tasks", JSON.stringify(taskItems));    
 }
 
 // localStorage.clear();

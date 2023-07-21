@@ -40,6 +40,33 @@
         <div class="see-work">
             <h1>Work To Do</h1>
             <div class="normal-list">
+                <div class="list-filter">
+                    <div class="filter">
+                        <span>Due Date:</span>
+                        <input type="date" class="date-filter">
+
+                        <label for="category-filter">Category:</label>
+                        <select id="category-filter" class="category-filter">
+                            <option value="All">All</option>
+                            <option value="Category 1">Category 1</option>
+                            <option value="Category 2">Category 2</option>
+                            <option value="Category 3">Category 3</option>
+                            <option value="Category 4">Category 4</option>
+                        </select>
+
+                        <label for="priority-filter">Priority:</label>
+                        <select id="priority-filter" class="priority-filter">
+                            <option value="All">All</option>
+                            <option value="Low">Low</option>
+                            <option value="High">High</option>
+                            <option value="Medium">medium</option>
+                        </select>
+                    </div>
+
+                    <!-- <div class="filter">
+                        
+                    </div> -->
+                </div>
                 <div class="list" id="list"></div>
             </div>
         </div>

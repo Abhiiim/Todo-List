@@ -161,3 +161,17 @@ html, body {
     padding-bottom: 10px;
 }
 
+.filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.date-filter, .category-filter, .priority-filter {
+    width: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
