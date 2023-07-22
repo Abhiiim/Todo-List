@@ -156,7 +156,8 @@ html, body {
 
 .item p {
     margin: 0;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 600;
     width: 400px;
     text-align: left;
     padding: 10px;
@@ -170,6 +171,7 @@ html, body {
 .subtask-list li {
     display: flex;
     align-items: center;
+    gap: 10px;
 }
 
 .subtask-list li button {
@@ -269,8 +271,4 @@ html, body {
     margin: 0 10px;
 }
 
-.subtask-list .checkbox-1 {
-    width: 12px;
-    height: 12px;
-}
 
