@@ -73,6 +73,24 @@ html, body {
     color: #333;
 }
 
+.subtask {
+    display: flex;
+    justify-content: space-between;
+}
+
+.subtask input {
+    padding: 10px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.subtask .btn {
+    width: 140px;
+}
+
 .btn {
     padding: 10px 20px;
     border: none;
@@ -129,6 +147,10 @@ html, body {
     margin-right: 5px;
 }
 
+.subtask-list {
+    margin-top: 0;
+}
+
 .delete-btn {
     padding: 10px 20px;
     background-color: #dc3545;
@@ -161,17 +183,59 @@ html, body {
     padding-bottom: 10px;
 }
 
+.list-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #e9e3e3;
+    border-radius: 5px;
+}
+
+.list-filter .btn {
+    width: 200px;
+}
+
 .filter {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
     align-items: center;
+    gap: 5px;
 }
 
 .date-filter, .category-filter, .priority-filter {
-    width: 100px;
+    width: 120px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+
+.list-sort {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #e9e3e3;
+    border-radius: 5px;
+    gap: 10px;
+}
+
+.sort {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.list-sort .btn {
+    width: 100px;
+}
+
+.checkbox-1 {
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
 }
 

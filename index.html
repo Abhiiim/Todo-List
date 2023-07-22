@@ -13,12 +13,7 @@
                 <input class="work-input" type="text" placeholder="Add New Work" id="new-work" name="new-work">
                 <div class="category">
                     <label for="category-option">Category:</label>
-                    <select id="category-option" class="category-option">
-                        <option value="Category 1">Category 1</option>
-                        <option value="Category 2">Category 2</option>
-                        <option value="Category 3">Category 3</option>
-                        <option value="Category 4">Category 4</option>
-                    </select>
+                    <input id="category-option" class="category-option" placeholder="Category">
                 </div>
 
                 <div class="due-date">
@@ -34,6 +29,17 @@
                         <option value="Medium">medium</option>
                     </select>
                 </div>
+
+                <div class="subtask">
+                    <input type="text" id="subtask">
+                    <button type="button" class="btn" onclick="addSubtask()">Add Subtask</button>
+                </div>
+
+                <div class="tags subtask">
+                    <input type="text" id="tags">
+                    <button type="button" class="btn" onclick="addTags()">Add Tags</button>
+                </div>
+
                 <button type="button" class="btn" id="add-btn" onclick="addNewItem()">Add Work</button>
             </form>
         </div>
@@ -42,17 +48,13 @@
             <div class="normal-list">
                 <div class="list-filter">
                     <div class="filter">
-                        <span>Due Date:</span>
-                        <input type="date" class="date-filter">
+                        <span>From:</span>
+                        <input type="date" class="date-filter" id="date-filter-from">
+                        <span>To:</span>
+                        <input type="date" class="date-filter" id="date-filter-to">
 
                         <label for="category-filter">Category:</label>
-                        <select id="category-filter" class="category-filter">
-                            <option value="All">All</option>
-                            <option value="Category 1">Category 1</option>
-                            <option value="Category 2">Category 2</option>
-                            <option value="Category 3">Category 3</option>
-                            <option value="Category 4">Category 4</option>
-                        </select>
+                        <input id="category-filter" class="category-filter" placeholder="Category">
 
                         <label for="priority-filter">Priority:</label>
                         <select id="priority-filter" class="priority-filter">
@@ -62,11 +64,17 @@
                             <option value="Medium">medium</option>
                         </select>
                     </div>
-
-                    <!-- <div class="filter">
-                        
-                    </div> -->
+                    <button type="button" class="btn" onclick="filterTask()">Filter</button>
                 </div>
+
+                <div class="list-sort">
+                    <select id="list-sort" class="sort">
+                        <option value="date">Due Date</option>
+                        <option value="priority">Priority</option>
+                    </select>
+                    <button type="button" class="btn" onclick="sortTask()">Sort</button>
+                </div>
+
                 <div class="list" id="list"></div>
             </div>
         </div>

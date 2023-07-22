@@ -1,3 +1,16 @@
+// Creating a checkbox for checking whether a particular task is complete or not
+function createCheckbox (newItem, task) {
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = task.id;
+    if (task.isCompleted) checkbox.checked = true;
+    checkbox.addEventListener("click", function() {
+        taskCompleted(this);
+    });
+    checkbox.classList.add("checkbox-1");
+    newItem.appendChild(checkbox);
+}
+
 // Creating a paragraph element for the title of the task
 function addPara(newItem, task) {
     let paraDiv = document.createElement("div");
@@ -10,10 +23,35 @@ function addPara(newItem, task) {
     paraDiv.appendChild(taskTitle);
     newItem.appendChild(paraDiv);
 
+    let subtaskList = document.createElement("ul");
+    for (let i=0; i<task.subtasks.length; i++) {
+        let subtaskItem = document.createElement("li");
+        subtaskItem.innerHTML = task.subtasks[i];
+        subtaskList.appendChild(subtaskItem);
+    }
+    subtaskList.classList.add("subtask-list");
+    paraDiv.appendChild(subtaskList);
+
     let taskCategory = document.createElement("div");
     taskCategory.innerText = task.category + " | " + task.due_date + " | " + task.priority;
     taskCategory.classList.add("para-options");
     paraDiv.appendChild(taskCategory);
+
+    console.log(task.tags);
+
+    let taskTags = document.createElement("div");
+    let tag = "";
+    for (let i=0; i<task.tags.length; i++) {
+        if (i == 0) {
+            tag = task.tags[i];
+        } else {
+            tag += " | " + task.tags[i];
+        }
+    }
+    taskTags.innerHTML = tag;
+    taskTags.classList.add("para-options");
+    paraDiv.appendChild(taskTags);
+
     newItem.appendChild(paraDiv);
 }
 
@@ -41,34 +79,38 @@ function deleteButton (newItem, taskId) {
     newItem.appendChild(deleteBtn);
 }
 
-// Creating a checkbox for checking whether a particular task is complete or not
-function createCheckbox (newItem, task) {
-    let checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.id = task.id;
-    if (task.isCompleted) checkbox.checked = true;
-    checkbox.addEventListener("click", function() {
-        taskCompleted(this);
-    });
-    newItem.appendChild(checkbox);
+function createTaskHTML(list, task) {
+    // Creating a new div element for list of item
+    let newItem = document.createElement("div");
+    newItem.classList.add("item")
+
+    createCheckbox (newItem, task);
+    addPara (newItem, task);
+    editButton (newItem, task.id);
+    deleteButton (newItem, task.id);
+
+    list.appendChild(newItem);
+    document.getElementById("new-work").value = "";
 }
 
 // Function for rendering the html using the content stored inside the array
 function renderTasks (list, taskList) {
     for (let i=0; i<taskList.length; i++) {
-
-        // Creating a new div element for list of item
-        let newItem = document.createElement("div");
-        newItem.classList.add("item")
-
-        createCheckbox (newItem, taskList[i]);
-        addPara (newItem, taskList[i]);
-        editButton (newItem, taskList[i].id);
-        deleteButton (newItem, taskList[i].id);
-
-        list.appendChild(newItem);
-        document.getElementById("new-work").value = "";
+        createTaskHTML(list, taskList[i]);
     }
+}
+
+let subtasks = [], tags = [];
+function addSubtask () {
+    let subtask = document.getElementById("subtask").value;
+    if (subtask.trim() !== "") subtasks.push(subtask);
+    document.getElementById("subtask").value = "";
+}
+
+function addTags () {
+    let tag = document.getElementById("tags").value;
+    if (tag.trim() !== "") tags.push(tag);
+    document.getElementById("tags").value = "";
 }
 
 // Function for adding a new element into the array and rerenders the whole html
@@ -85,18 +127,25 @@ function addNewItem () {
         if (taskId === null) taskId = 1;
         taskId = parseInt(taskId);
 
+        // console.log(subtasks);
+
         taskItems.push({
             id: taskId, 
             title: newWork, 
             category: category,
             due_date: due_date,
             priority: priority, 
-            isCompleted: false
+            isCompleted: false,
+            subtasks: subtasks, 
+            tags: tags
         });
         taskId++;
 
         // console.log(taskId);
         // console.log(taskItems);
+
+        subtasks = [];
+        tags = [];
 
         localStorage.setItem("tasks", JSON.stringify(taskItems));
         localStorage.setItem("taskId", taskId.toString());
@@ -147,14 +196,12 @@ function editItem (btn) {
     }
 
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
-
     for (let i=0; i<taskItems.length; i++) {
         if (taskItems[i].id == btn.id) {
             taskItems[i].title = para.innerText;
             break;
         }
     }
-
     localStorage.setItem("tasks", JSON.stringify(taskItems));
 }
 
@@ -169,14 +216,12 @@ function taskCompleted (box) {
     }
 
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
-
     for (let i=0; i<taskItems.length; i++) {
         if (taskItems[i].id == box.id) {
             taskItems[i].isCompleted = !taskItems[i].isCompleted;
             break;
         }
     }
-
     localStorage.setItem("tasks", JSON.stringify(taskItems));    
 }
 
@@ -185,4 +230,60 @@ function taskCompleted (box) {
 let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
 let list = document.getElementById('list');
 renderTasks(list, taskItems);
+
+
+function filterTask () {
+    let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+    let list = document.getElementById('list');
+    list.innerHTML = "";
+
+    for (let i=0; i<taskList.length; i++) {
+        let selectedCategory = document.getElementById("category-filter").value;
+        let selectedPriority = document.getElementById("priority-filter").value;
+        let dateFrom = document.getElementById("date-filter-from").value;
+        let dateTo = document.getElementById("date-filter-to").value;
+
+        if (dateTo == "") {
+            if (selectedCategory.trim() == "" && selectedPriority == "All") {
+                createTaskHTML(list, taskList[i]);
+            } else if (selectedPriority == "All") {
+                if (taskList[i].category == selectedCategory) {
+                    createTaskHTML(list, taskList[i]);
+                }
+            } else if (selectedCategory.trim() == "") {
+                if (taskList[i].priority == selectedPriority) {
+                    createTaskHTML(list, taskList[i]);
+                }
+            } else {
+                if (taskList[i].category == selectedCategory && taskList[i].priority == selectedPriority) {
+                    createTaskHTML(list, taskList[i]);
+                }
+            }
+        } else {
+            if (selectedCategory.trim() == "" && selectedPriority == "All") {
+                if (Date.parse(taskList[i].due_date) >= Date.parse(dateFrom) && Date.parse(taskList[i].due_date) <= Date.parse(dateTo)) {
+                    createTaskHTML(list, taskList[i]);
+                }
+            } else if (selectedPriority == "All") {
+                if (taskList[i].category == selectedCategory) {
+                    if (Date.parse(taskList[i].due_date) >= Date.parse(dateFrom) && Date.parse(taskList[i].due_date) <= Date.parse(dateTo)) {
+                        createTaskHTML(list, taskList[i]);
+                    }
+                }
+            } else if (selectedCategory.trim() == "") {
+                if (taskList[i].priority == selectedPriority) {
+                    if (Date.parse(taskList[i].due_date) >= Date.parse(dateFrom) && Date.parse(taskList[i].due_date) <= Date.parse(dateTo)) {
+                        createTaskHTML(list, taskList[i]);
+                    }
+                }
+            } else {
+                if (taskList[i].category == selectedCategory && taskList[i].priority == selectedPriority) {
+                    if (Date.parse(taskList[i].due_date) >= Date.parse(dateFrom) && Date.parse(taskList[i].due_date) <= Date.parse(dateTo)) {
+                        createTaskHTML(list, taskList[i]);
+                    }
+                }
+            }
+        }
+    }
+}
 
