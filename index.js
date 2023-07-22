@@ -392,6 +392,55 @@ function activityLogs () {
     }
 }
 
+function searchItems () {
+    let searchType = document.getElementById("search-type").value;
+    let searchItem = document.getElementById("search-item").value;
+    let list = document.getElementById("list");
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    list.innerHTML = "";
+
+    console.log(searchItem);
+
+    for (let i=0; i<tasks.length; i++) {
+        if (searchType == "todo") {
+            if (tasks[i].title.toUpperCase() == searchItem.toUpperCase()) {
+                createTaskHTML(list, tasks[i]);
+            }
+        } else if (searchType == "tags") {
+            for (let j=0; j<tasks[i].tags.length; j++) {
+                if (tasks[i].tags[j].toUpperCase() == searchItem.toUpperCase()) {
+                    createTaskHTML(list, tasks[i]);
+                }
+            }
+        } else if (searchType == "subtask") {
+            for (let j=0; j<tasks[i].subtasks.length; j++) {
+                if (tasks[i].subtasks[j].toUpperCase() == searchItem.toUpperCase()) {
+                    createTaskHTML(list, tasks[i]);
+                }
+            }
+        }
+    }
+    if (searchType == "todo") {
+        activity.push("Tasks are searched on the basis of todo");
+    } else if (searchType == "tags") {
+        activity.push("Tasks are searched on the basis of tags");
+    } else if (searchType == "subtask") {
+        activity.push("Tasks are searched on the basis of subtask");
+    }
+    localStorage.setItem("activity", JSON.stringify(activity));
+}
+
+function showAllTasks () {
+    let list = document.getElementById("list");
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    list.innerHTML = "";
+    renderTasks(list, tasks)
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("All tasks are shown");
+    localStorage.setItem("activity", JSON.stringify(activity));
+}
+
 // localStorage.clear();
 
 let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];

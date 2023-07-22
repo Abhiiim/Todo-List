@@ -87,6 +87,17 @@
                     <button type="button" class="btn" onclick="sortTask()">Sort</button>
                 </div>
 
+                <div class="search list-sort">
+                    <select id="search-type" class="sort">
+                        <option value="todo">Todo</option>
+                        <option value="tags">Tags</option>
+                        <option value="subtask">Subtask</option>
+                    </select>
+                    <input type="text" id="search-item" class="sort">
+                    <button type="button" class="btn" onclick="searchItems()">Search</button>
+                    <button type="button" class="btn" onclick="showAllTasks()">Show All</button>
+                </div>
+
                 <div class="list" id="list"></div>
             </div>
         </div>

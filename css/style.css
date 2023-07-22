@@ -245,8 +245,12 @@ html, body {
     border-radius: 5px;
 }
 
+.search .sort {
+    padding: 10px 0;
+}
+
 .list-sort .btn {
-    width: 100px;
+    width: 120px;
 }
 
 .checkbox-1 {
