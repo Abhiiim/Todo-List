@@ -125,8 +125,6 @@ function addNewItem () {
         if (taskId === null) taskId = 1;
         taskId = parseInt(taskId);
 
-        // console.log(subtasks);
-
         taskItems.push({
             id: taskId, 
             title: newWork, 
@@ -138,9 +136,6 @@ function addNewItem () {
             tags: tags
         });
         taskId++;
-
-        // console.log(taskId);
-        // console.log(taskItems);
 
         subtasks = [];
         tags = [];
@@ -155,6 +150,10 @@ function addNewItem () {
         let list = document.getElementById('list');
         list.innerHTML = "";
         renderTasks(list, taskItems);
+
+        let activity = JSON.parse(localStorage.getItem("activity")) || [];
+        activity.push("Added a new task with title " + newWork);
+        localStorage.setItem("activity", JSON.stringify(activity));
     }
 }
 
@@ -164,7 +163,6 @@ function deleteItem(btn) {
     let list = document.getElementById('list');
 
     deleteFromArray(btn.id, taskItems);
-
     localStorage.setItem("tasks", JSON.stringify(taskItems));
 
     list.innerHTML = "";
@@ -174,6 +172,9 @@ function deleteItem(btn) {
 // Function for deleting a particular element from array using the id of that element
 function deleteFromArray(id, taskList) {
     let idx = taskList.findIndex(task => task.id == id);
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("Deleted task with title " + taskList[idx].title);
+    localStorage.setItem("activity", JSON.stringify(activity));
     taskList.splice(idx, 1);
 }
 
@@ -193,24 +194,32 @@ function editItem (btn) {
         btn.style.backgroundColor = "#007bff";
     }
 
+    let prevTitle = "";
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
     for (let i=0; i<taskItems.length; i++) {
         if (taskItems[i].id == btn.id) {
+            prevTitle = taskItems[i].title;
             taskItems[i].title = para.innerText;
             break;
         }
     }
     localStorage.setItem("tasks", JSON.stringify(taskItems));
+
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("Edit a task with previous title " + prevTitle + " to new title " + para.innerText);
+    localStorage.setItem("activity", JSON.stringify(activity));
 }
 
 function taskCompleted (box) {
-    console.log(box.checked);
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
     var prtDiv = box.parentNode;
     var para = prtDiv.querySelector("p");
     if (box.checked) {
         para.style.textDecoration = "line-through";
+        activity.push("Task with title " + para.innerText + " is marked as completed");
     } else {
         para.style.textDecoration = "none";
+        activity.push("Task with title " + para.innerText + " is marked as uncompleted");
     }
 
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -221,13 +230,8 @@ function taskCompleted (box) {
         }
     }
     localStorage.setItem("tasks", JSON.stringify(taskItems));    
+    localStorage.setItem("activity", JSON.stringify(activity));
 }
-
-// localStorage.clear();
-
-let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
-let list = document.getElementById('list');
-renderTasks(list, taskItems);
 
 
 function filterTask () {
@@ -235,12 +239,12 @@ function filterTask () {
     let list = document.getElementById('list');
     list.innerHTML = "";
 
-    for (let i=0; i<taskList.length; i++) {
-        let selectedCategory = document.getElementById("category-filter").value;
-        let selectedPriority = document.getElementById("priority-filter").value;
-        let dateFrom = document.getElementById("date-filter-from").value;
-        let dateTo = document.getElementById("date-filter-to").value;
+    let selectedCategory = document.getElementById("category-filter").value;
+    let selectedPriority = document.getElementById("priority-filter").value;
+    let dateFrom = document.getElementById("date-filter-from").value;
+    let dateTo = document.getElementById("date-filter-to").value;
 
+    for (let i=0; i<taskList.length; i++) {
         if (dateTo == "") {
             if (selectedCategory.trim() == "" && selectedPriority == "All") {
                 createTaskHTML(list, taskList[i]);
@@ -283,11 +287,16 @@ function filterTask () {
             }
         }
     }
+
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("Todo List is filterd");
+    localStorage.setItem("activity", JSON.stringify(activity));
 }
 
 function sortTask () {
     let sortBasis = document.getElementById("list-sort").value;
     let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
     let list = document.getElementById('list');
     list.innerHTML = "";
 
@@ -301,6 +310,7 @@ function sortTask () {
                 return 0;
             }
         });
+        activity.push("Sorted the todo list items on the basis of due date");
     } else if (sortBasis == "priority") {
         taskList.sort(function (t1, t2) {
             if (t1.priority === t2.priority) return 0;
@@ -310,6 +320,7 @@ function sortTask () {
             if (t2.priority === "Medium") return 1;
             return 0; 
         });
+        activity.push("Sorted the todo list items on the basis of priority");
     } else {
         taskList.sort(function (t1, t2) {
             if (t1.id < t2.id) {
@@ -320,10 +331,13 @@ function sortTask () {
                 return 0;
             }
         });
+        activity.push("Sort the todo list items in its original state");
     }
     // console.log(taskList);
     localStorage.setItem("tasks", JSON.stringify(taskList));
     renderTasks(list, taskList)
+
+    localStorage.setItem("activity", JSON.stringify(activity));
 }
 
 
@@ -360,3 +374,26 @@ function viewBacklogs () {
     }
 }
 
+
+function activityLogs () {
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    let activityList = document.getElementById("activity-logs");
+
+    if (activityList.innerHTML == "") {
+        let actList = document.createElement("ul");
+        for (let i=0; i<activity.length; i++) {
+            let newItem = document.createElement("li");
+            newItem.innerHTML = activity[i];
+            actList.appendChild(newItem);
+        }
+        activityList.appendChild(actList);
+    } else {
+        activityList.innerHTML = ""
+    }
+}
+
+// localStorage.clear();
+
+let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+let list = document.getElementById('list');
+renderTasks(list, taskItems);
