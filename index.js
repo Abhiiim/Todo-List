@@ -326,3 +326,37 @@ function sortTask () {
     renderTasks(list, taskList)
 }
 
+
+function addBacklogs () {
+    let backlogs = JSON.parse(localStorage.getItem("backlogs")) || [];
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    for (let i=0; i<tasks.length; i++) {
+        let today = new Date();
+        let taskDate = Date.parse(tasks[i].due_date);
+        if (today > taskDate) {
+            backlogs.push(tasks[i]);
+            tasks.splice(i, 1);
+        }
+    }
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("backlogs", JSON.stringify(backlogs));
+}
+
+addBacklogs();
+
+function viewBacklogs () {
+    let backlogs = JSON.parse(localStorage.getItem("backlogs")) || [];
+    let backlogList = document.getElementById("backlogs");
+
+    if (backlogList.innerHTML == "") {
+        for (let i=0; i<backlogs.length; i++) {
+            let newItem = document.createElement("div");
+            newItem.classList.add("item")
+            addPara (newItem, backlogs[i]);
+            backlogList.appendChild(newItem);
+        }
+    } else {
+        backlogList.innerHTML = "";
+    }
+}
+
