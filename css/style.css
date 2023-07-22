@@ -167,6 +167,16 @@ html, body {
     margin-top: 0;
 }
 
+.subtask-list li {
+    display: flex;
+    align-items: center;
+}
+
+.subtask-list li button {
+    padding: 4px;
+    font-size: 14px;
+}
+
 .delete-btn {
     padding: 10px 20px;
     background-color: #dc3545;
@@ -257,5 +267,10 @@ html, body {
     width: 30px;
     height: 30px;
     margin: 0 10px;
+}
+
+.subtask-list .checkbox-1 {
+    width: 12px;
+    height: 12px;
 }
 

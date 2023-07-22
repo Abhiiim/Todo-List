@@ -11,6 +11,62 @@ function createCheckbox (newItem, task) {
     newItem.appendChild(checkbox);
 }
 
+function createSubtaskCheckbox (newItem, task) {
+    let checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = task.id;
+    // checkbox.addEventListener("click", function() {
+    //     subtaskCompleted(this);
+    // });
+    newItem.appendChild(checkbox);
+}
+
+// Creating a edit button for editing the title of a task
+function editButton (newItem, taskId) {
+    let editBtn = document.createElement("button");
+    editBtn.innerHTML = "Edit";
+    editBtn.id = taskId;
+    editBtn.classList.add("edit-btn");
+    editBtn.addEventListener("click", function () {
+        editItem(this);
+    });
+    newItem.appendChild(editBtn);
+}
+
+function editSubtaskButton (newItem, taskId) {
+    let editBtn = document.createElement("button");
+    editBtn.innerHTML = "Edit";
+    editBtn.id = taskId;
+    editBtn.classList.add("edit-btn");
+    editBtn.addEventListener("click", function () {
+        editSubtask(this);
+    });
+    newItem.appendChild(editBtn);
+}
+
+// Creating a delete button for deleting a particular task
+function deleteButton (newItem, taskId) {
+    let deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", function() {
+        deleteItem(this);
+    });
+    deleteBtn.id = taskId;
+    newItem.appendChild(deleteBtn);
+}
+
+function deleteSubtaskButton (newItem, taskId) {
+    let deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "Delete";
+    deleteBtn.classList.add("delete-btn");
+    deleteBtn.addEventListener("click", function() {
+        deleteSubtask(this);
+    });
+    deleteBtn.id = taskId;
+    newItem.appendChild(deleteBtn);
+}
+
 // Creating a paragraph element for the title of the task
 function addPara(newItem, task) {
     let paraDiv = document.createElement("div");
@@ -26,7 +82,12 @@ function addPara(newItem, task) {
     let subtaskList = document.createElement("ul");
     for (let i=0; i<task.subtasks.length; i++) {
         let subtaskItem = document.createElement("li");
-        subtaskItem.innerHTML = task.subtasks[i];
+        let subtaskSpan = document.createElement("span");
+        subtaskSpan.innerHTML = task.subtasks[i].title;
+        createSubtaskCheckbox(subtaskItem, task.subtasks[i])
+        subtaskItem.appendChild(subtaskSpan);
+        editSubtaskButton(subtaskItem, task.subtasks[i].id);
+        deleteSubtaskButton(subtaskItem, task.subtasks[i].id)
         subtaskList.appendChild(subtaskItem);
     }
     subtaskList.classList.add("subtask-list");
@@ -53,30 +114,6 @@ function addPara(newItem, task) {
     newItem.appendChild(paraDiv);
 }
 
-// Creating a edit button for editing the title of a task
-function editButton (newItem, taskId) {
-    let editBtn = document.createElement("button");
-    editBtn.innerHTML = "Edit";
-    editBtn.id = taskId;
-    editBtn.classList.add("edit-btn");
-    editBtn.addEventListener("click", function () {
-        editItem(this);
-    })
-    newItem.appendChild(editBtn);
-}
-
-// Creating a delete button for deleting a particular task
-function deleteButton (newItem, taskId) {
-    let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "Delete";
-    deleteBtn.classList.add("delete-btn");
-    deleteBtn.addEventListener("click", function() {
-        deleteItem(this);
-    });
-    deleteBtn.id = taskId;
-    newItem.appendChild(deleteBtn);
-}
-
 function createTaskHTML(list, task) {
     // Creating a new div element for list of item
     let newItem = document.createElement("div");
@@ -101,7 +138,14 @@ function renderTasks (list, taskList) {
 let subtasks = [], tags = [];
 function addSubtask () {
     let subtask = document.getElementById("subtask").value;
-    if (subtask.trim() !== "") subtasks.push(subtask);
+
+    let subtaskId = localStorage.getItem("subtaskId");
+    if (subtaskId === null) subtaskId = 1;
+    subtaskId = parseInt(subtaskId);
+
+    if (subtask.trim() !== "") subtasks.push({id: subtaskId, title: subtask});
+    subtaskId++;
+    localStorage.setItem("subtaskId", subtaskId.toString());
     document.getElementById("subtask").value = "";
 }
 
@@ -152,7 +196,7 @@ function addNewItem () {
         renderTasks(list, taskItems);
 
         let activity = JSON.parse(localStorage.getItem("activity")) || [];
-        activity.push("Added a new task with title " + newWork);
+        activity.push("Added a new task with title " + newWork + " at " + getDateTime());
         localStorage.setItem("activity", JSON.stringify(activity));
     }
 }
@@ -169,11 +213,40 @@ function deleteItem(btn) {
     renderTasks(list, taskItems);
 }
 
+function deleteSubtask(btn) {
+    let topParent = btn.parentNode.parentNode.parentNode.parentNode;
+    let topParentId = topParent.querySelector("input").id;
+
+    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+    for (let i=0; i<taskItems.length; i++) {
+        if (taskItems[i].id == topParentId) {
+            taskTitle = taskItems[i].title;
+            for (let j=0; j<taskItems[i].subtasks.length; j++) {
+                if (taskItems[i].subtasks[j].id == btn.id) {
+                    prevSubtaskTitle = taskItems[i].subtasks[j].title;
+                    taskItems[i].subtasks.splice(j, 1);
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    localStorage.setItem("tasks", JSON.stringify(taskItems));
+
+    let list = document.getElementById('list');
+    list.innerHTML = "";
+    renderTasks(list, taskItems);
+
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("Deleted a subtask " + prevSubtaskTitle + " of task of title " + taskTitle + " at " + getDateTime());
+    localStorage.setItem("activity", JSON.stringify(activity));
+}
+
 // Function for deleting a particular element from array using the id of that element
 function deleteFromArray(id, taskList) {
     let idx = taskList.findIndex(task => task.id == id);
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
-    activity.push("Deleted task with title " + taskList[idx].title);
+    activity.push("Deleted task with title " + taskList[idx].title + " at " + getDateTime());
     localStorage.setItem("activity", JSON.stringify(activity));
     taskList.splice(idx, 1);
 }
@@ -206,7 +279,46 @@ function editItem (btn) {
     localStorage.setItem("tasks", JSON.stringify(taskItems));
 
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
-    activity.push("Edit a task with previous title " + prevTitle + " to new title " + para.innerText);
+    activity.push("Edited a task with previous title " + prevTitle + " to new title " + para.innerText + " at " + getDateTime());
+    localStorage.setItem("activity", JSON.stringify(activity));
+}
+
+function editSubtask (btn) {
+    let parent = btn.parentNode;
+    let span = parent.querySelector("span");
+    let topParent = btn.parentNode.parentNode.parentNode.parentNode;
+    let topParentId = topParent.querySelector("input").id;
+
+    if (span.contentEditable == 'true') {
+        span.contentEditable = 'false';
+        btn.innerHTML = "Edit";
+        btn.style.backgroundColor = "#059c3d";
+    } else  {
+        span.contentEditable = 'true';
+        span.focus();
+        btn.innerHTML = "Save";
+        btn.style.backgroundColor = "#007bff";
+    }
+
+    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+    let prevSubtaskTitle = "", taskTitle = "";
+    for (let i=0; i<taskItems.length; i++) {
+        if (taskItems[i].id == topParentId) {
+            taskTitle = taskItems[i].title;
+            for (let j=0; j<taskItems[i].subtasks.length; j++) {
+                if (taskItems[i].subtasks[j].id == btn.id) {
+                    prevSubtaskTitle = taskItems[i].subtasks[j].title;
+                    taskItems[i].subtasks[j].title = span.innerText;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    localStorage.setItem("tasks", JSON.stringify(taskItems));
+
+    let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    activity.push("Edited a subtask " + prevSubtaskTitle + " to new subtask " + span.innerText + " of task of title " + taskTitle + " at " + getDateTime());
     localStorage.setItem("activity", JSON.stringify(activity));
 }
 
@@ -216,10 +328,10 @@ function taskCompleted (box) {
     var para = prtDiv.querySelector("p");
     if (box.checked) {
         para.style.textDecoration = "line-through";
-        activity.push("Task with title " + para.innerText + " is marked as completed");
+        activity.push("Task with title " + para.innerText + " is marked as completed" + " at " + getDateTime());
     } else {
         para.style.textDecoration = "none";
-        activity.push("Task with title " + para.innerText + " is marked as uncompleted");
+        activity.push("Task with title " + para.innerText + " is marked as uncompleted" + " at " + getDateTime());
     }
 
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -289,7 +401,7 @@ function filterTask () {
     }
 
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
-    activity.push("Todo List is filterd");
+    activity.push("Todo List is filterd" + " at " + getDateTime());
     localStorage.setItem("activity", JSON.stringify(activity));
 }
 
@@ -310,7 +422,7 @@ function sortTask () {
                 return 0;
             }
         });
-        activity.push("Sorted the todo list items on the basis of due date");
+        activity.push("Sorted the todo list items on the basis of due date" + " at " + getDateTime());
     } else if (sortBasis == "priority") {
         taskList.sort(function (t1, t2) {
             if (t1.priority === t2.priority) return 0;
@@ -320,7 +432,7 @@ function sortTask () {
             if (t2.priority === "Medium") return 1;
             return 0; 
         });
-        activity.push("Sorted the todo list items on the basis of priority");
+        activity.push("Sorted the todo list items on the basis of priority" + " at " + getDateTime());
     } else {
         taskList.sort(function (t1, t2) {
             if (t1.id < t2.id) {
@@ -331,7 +443,7 @@ function sortTask () {
                 return 0;
             }
         });
-        activity.push("Sort the todo list items in its original state");
+        activity.push("Sort the todo list items in its original state" + " at " + getDateTime());
     }
     // console.log(taskList);
     localStorage.setItem("tasks", JSON.stringify(taskList));
@@ -415,18 +527,18 @@ function searchItems () {
             }
         } else if (searchType == "subtask") {
             for (let j=0; j<tasks[i].subtasks.length; j++) {
-                if (tasks[i].subtasks[j].toUpperCase() == searchItem.toUpperCase()) {
+                if (tasks[i].subtasks[j].title.toUpperCase() == searchItem.toUpperCase()) {
                     createTaskHTML(list, tasks[i]);
                 }
             }
         }
     }
     if (searchType == "todo") {
-        activity.push("Tasks are searched on the basis of todo");
+        activity.push("Tasks are searched on the basis of todo" + " at " + getDateTime());
     } else if (searchType == "tags") {
-        activity.push("Tasks are searched on the basis of tags");
+        activity.push("Tasks are searched on the basis of tags" + " at " + getDateTime());
     } else if (searchType == "subtask") {
-        activity.push("Tasks are searched on the basis of subtask");
+        activity.push("Tasks are searched on the basis of subtask" + " at " + getDateTime());
     }
     localStorage.setItem("activity", JSON.stringify(activity));
 }
@@ -436,9 +548,27 @@ function showAllTasks () {
     let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
     list.innerHTML = "";
     renderTasks(list, tasks)
+    document.getElementById("search-item").value = "";
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
-    activity.push("All tasks are shown");
+    activity.push("All tasks are shown" + " at " + getDateTime());
     localStorage.setItem("activity", JSON.stringify(activity));
+}
+
+function getDateTime () {
+    const currentDate = new Date();
+
+    // Extract date components
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+
+    // Extract time components
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const seconds = currentDate.getSeconds();
+
+    const datetime = hours + ":" + minutes + ":" + seconds + " " + day + "/" + month + "/" + year;
+    return datetime; 
 }
 
 // localStorage.clear();
