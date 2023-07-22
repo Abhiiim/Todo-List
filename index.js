@@ -37,8 +37,6 @@ function addPara(newItem, task) {
     taskCategory.classList.add("para-options");
     paraDiv.appendChild(taskCategory);
 
-    console.log(task.tags);
-
     let taskTags = document.createElement("div");
     let tag = "";
     for (let i=0; i<task.tags.length; i++) {
@@ -285,5 +283,46 @@ function filterTask () {
             }
         }
     }
+}
+
+function sortTask () {
+    let sortBasis = document.getElementById("list-sort").value;
+    let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+    let list = document.getElementById('list');
+    list.innerHTML = "";
+
+    if (sortBasis == "date") {
+        taskList.sort(function (t1, t2) {
+            if (Date.parse(t1.due_date) < Date.parse(t2.due_date)) {
+                return -1;
+            } else if (Date.parse(t1.due_date) < Date.parse(t2.due_date)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    } else if (sortBasis == "priority") {
+        taskList.sort(function (t1, t2) {
+            if (t1.priority === t2.priority) return 0;
+            if (t1.priority === "High") return -1;
+            if (t2.priority === "High") return 1;
+            if (t1.priority === "Medium") return -1;
+            if (t2.priority === "Medium") return 1;
+            return 0; 
+        });
+    } else {
+        taskList.sort(function (t1, t2) {
+            if (t1.id < t2.id) {
+                return -1;
+            } else if (t1.id < t2.id) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+    }
+    // console.log(taskList);
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    renderTasks(list, taskList)
 }
 
