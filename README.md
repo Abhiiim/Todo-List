@@ -5,4 +5,3 @@ Task which I am not able to complete due to time constraint:
 4. There are also some corner cases that I didn't handle due to time limit.
 
 
-link for the app: https://abhiiim.github.io/Todo-List/  
