@@ -35,9 +35,12 @@ function editButton (newItem, taskId) {
 
 function editSubtaskButton (newItem, taskId) {
     let editBtn = document.createElement("button");
-    editBtn.innerHTML = "Edit";
     editBtn.id = taskId;
-    editBtn.classList.add("edit-btn");
+    editBtn.classList.add("subtask-btn");
+    let editSymbol = document.createElement("i");
+    editSymbol.className = "fas fa-edit"; // Font Awesome edit icon class
+    editBtn.appendChild(editSymbol);
+
     editBtn.addEventListener("click", function () {
         editSubtask(this);
     });
@@ -58,25 +61,36 @@ function deleteButton (newItem, taskId) {
 
 function deleteSubtaskButton (newItem, taskId) {
     let deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = "Delete";
-    deleteBtn.classList.add("delete-btn");
+    // deleteBtn.innerHTML = "Delete";
+    const deleteSymbol = document.createElement("i");
+    deleteSymbol.className = "fas fa-trash-alt"; // Font Awesome delete icon class
+    deleteBtn.appendChild(deleteSymbol);
+    deleteBtn.classList.add("subtask-btn");
     deleteBtn.addEventListener("click", function() {
         deleteSubtask(this);
     });
     deleteBtn.id = taskId;
+    deleteBtn.style.color = "#dc3545";
     newItem.appendChild(deleteBtn);
 }
 
 // Creating a paragraph element for the title of the task
 function addPara(newItem, task) {
     let paraDiv = document.createElement("div");
+    paraDiv.classList.add("task-details");
+
+    let taskCheck = document.createElement("div");
+    taskCheck.classList.add("task-check");
+    createCheckbox (taskCheck, task);
 
     let taskTitle = document.createElement("p");
+
     taskTitle.innerText = task.title;
     if (task.isCompleted) {
         taskTitle.style.textDecoration = "line-through";
     }
-    paraDiv.appendChild(taskTitle);
+    taskCheck.appendChild(taskTitle);
+    paraDiv.appendChild(taskCheck);
     newItem.appendChild(paraDiv);
 
     let subtaskList = document.createElement("ul");
@@ -119,10 +133,14 @@ function createTaskHTML(list, task) {
     let newItem = document.createElement("div");
     newItem.classList.add("item")
 
-    createCheckbox (newItem, task);
+    // createCheckbox (newItem, task);
     addPara (newItem, task);
-    editButton (newItem, task.id);
-    deleteButton (newItem, task.id);
+
+    let editDelete = document.createElement("edit-delete");
+    editButton (editDelete, task.id);
+    deleteButton (editDelete, task.id);
+    editDelete.classList.add("edit-delete");
+    newItem.appendChild(editDelete);
 
     list.appendChild(newItem);
     document.getElementById("new-work").value = "";
@@ -254,7 +272,7 @@ function deleteFromArray(id, taskList) {
 // Function for editing a Particular Item inline using the contentEditable property
 // And then update the title in the array
 function editItem (btn) {
-    var prtDiv = btn.parentNode;
+    var prtDiv = btn.parentNode.parentNode;
     var para = prtDiv.querySelector("p");
     if (para.contentEditable == 'true') {
         para.contentEditable = 'false';
@@ -291,13 +309,16 @@ function editSubtask (btn) {
 
     if (span.contentEditable == 'true') {
         span.contentEditable = 'false';
-        btn.innerHTML = "Edit";
-        btn.style.backgroundColor = "#059c3d";
+        btn.innerHTML = "";
+        let editSymbol = document.createElement("i");
+        editSymbol.className = "fas fa-edit"; // Font Awesome edit icon class
+        btn.appendChild(editSymbol);
+        btn.style.backgroundColor = "none";
     } else  {
         span.contentEditable = 'true';
         span.focus();
         btn.innerHTML = "Save";
-        btn.style.backgroundColor = "#007bff";
+        // btn.style.backgroundColor = "#007bff";
     }
 
     let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -474,6 +495,8 @@ function viewBacklogs () {
     let backlogs = JSON.parse(localStorage.getItem("backlogs")) || [];
     let backlogList = document.getElementById("backlogs");
 
+    let activityList = document.getElementById("activity-logs").innerHTML = "";
+
     if (backlogList.innerHTML == "") {
         for (let i=0; i<backlogs.length; i++) {
             let newItem = document.createElement("div");
@@ -490,6 +513,8 @@ function viewBacklogs () {
 function activityLogs () {
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
     let activityList = document.getElementById("activity-logs");
+
+    let backlogList = document.getElementById("backlogs").innerHTML = "";
 
     if (activityList.innerHTML == "") {
         let actList = document.createElement("ul");

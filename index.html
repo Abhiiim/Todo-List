@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <title>Todo List</title>
 </head>
 <body>
+
+    <div class="nav-bar">
+        <div class="nav-bar-heading">My Todo List App</div>
+    </div>
+
     <div class="container">
         <div class="add-work">
             <form action="">
                 <input class="work-input" type="text" placeholder="Add New Work" id="new-work" name="new-work">
+
+                <div class="subtask">
+                    <input type="text" id="subtask">
+                    <button type="button" class="btn" onclick="addSubtask()">Add Subtask</button>
+                </div>
+
                 <div class="category">
-                    <label for="category-option">Category:</label>
+                    <label for="category-option">Category *:</label>
                     <input id="category-option" class="category-option" placeholder="Category">
                 </div>
 
                 <div class="due-date">
-                    <span class="date-label">Due Date:</span>
-                    <input type="date" id="date-picker" class="date-picker">
+                    <span class="date-label">Due Date *:</span>
+                    <input type="datetime-local" id="date-picker" class="date-picker">
                 </div>
 
                 <div class="category">
-                    <label for="priority-option">Priority:</label>
+                    <label for="priority-option">Priority *:</label>
                     <select id="priority-option" class="category-option">
                         <option value="Low">Low</option>
                         <option value="High">High</option>
                         <option value="Medium">medium</option>
                     </select>
-                </div>
-
-                <div class="subtask">
-                    <input type="text" id="subtask">
-                    <button type="button" class="btn" onclick="addSubtask()">Add Subtask</button>
                 </div>
 
                 <div class="tags subtask">
@@ -47,9 +54,7 @@
         <div class="logs">
             <button type="button" class="btn" onclick="viewBacklogs()">View Backlogs</button>
             <div class="backlogs" id="backlogs"></div>
-        </div>
-
-        <div class="logs">
+            
             <button type="button" class="btn" onclick="activityLogs()">Activity Logs</button>
             <div class="activity-logs" id="activity-logs"></div>
         </div>
