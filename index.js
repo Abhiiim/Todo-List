@@ -179,6 +179,7 @@ function addNewItem () {
     let category = document.getElementById("category-option").value;
     let due_date = document.getElementById("date-picker").value;
     let priority = document.getElementById("priority-option").value;
+    let reminder = document.getElementById("reminder").value;
 
     if (newWork.trim() !== "" && category.trim() !== "" && due_date.trim() !=="" && priority.trim() != "") {
 
@@ -195,7 +196,8 @@ function addNewItem () {
             priority: priority, 
             isCompleted: false,
             subtasks: subtasks, 
-            tags: tags
+            tags: tags, 
+            reminder: reminder
         });
         taskId++;
 
@@ -601,3 +603,16 @@ function getDateTime () {
 let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
 let list = document.getElementById('list');
 renderTasks(list, taskItems);
+
+function setReminder () {
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => {
+        let reminderTime = Date.parse(task.reminder);
+        let currentTime = Date.parse(new Date());
+        if (reminderTime === currentTime) {
+            alert("Task with title: " + task.title + " should be completed at " + task.due_date);
+        }
+    });
+}
+
+setInterval(setReminder, 1000);
