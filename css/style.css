@@ -5,7 +5,7 @@ html, body {
 .nav-bar {
     width: 100%;
     background-color: #4fd1f4;
-    height: 50px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,16 +15,16 @@ html, body {
 }
 
 .nav-bar-heading {
-    font-size: 26px;
-    font-weight: 500;
+    font-size: 30px;
+    font-weight: 600;
 }
 
 .container {
     position: relative;
-    top: 50px;
+    top: 60px;
     width: 1000px;
     height: fit-content;
-    /* background-color: rgb(99 219 185 / 36%); */
+    background-color: #e9e3e332;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -128,6 +128,7 @@ html, body {
     padding: 20px;
     border-radius: 5px;
     margin: 10px;
+    background-color: #fff;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1), 
                 -2px -2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -167,10 +168,12 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(184, 235, 241, 0.59);
+    /* background-color: rgba(184, 235, 241, 0.59); */
     width: 100%;
-    border-radius: 5px;
-    border: 0.5px solid black;
+    border-radius: 2px;
+    /* border: 0.5px solid black; */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 
+                -2px -2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .item p {

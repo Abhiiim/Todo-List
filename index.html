@@ -47,6 +47,11 @@
                     <button type="button" class="btn" onclick="addTags()">Add Tags</button>
                 </div>
 
+                <div class="subtask">
+                    <input type="datetime-local" id="reminder">
+                    <button type="button" class="btn" onclick="setReminder()">Set Reminder</button>
+                </div>
+
                 <button type="button" class="btn" id="add-btn" onclick="addNewItem()">Add Work</button>
             </form>
         </div>
@@ -54,7 +59,7 @@
         <div class="logs">
             <button type="button" class="btn" onclick="viewBacklogs()">View Backlogs</button>
             <div class="backlogs" id="backlogs"></div>
-            
+
             <button type="button" class="btn" onclick="activityLogs()">Activity Logs</button>
             <div class="activity-logs" id="activity-logs"></div>
         </div>
