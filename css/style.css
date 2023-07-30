@@ -116,6 +116,11 @@ html, body {
     align-items: center;
 }
 
+.auto-complete {
+    display: flex;
+    align-items: center;
+}
+
 .btn {
     padding: 10px 20px;
     border: none;
@@ -256,7 +261,7 @@ html, body {
 }
 
 .para-options {
-    font-size: 12px;
+    font-size: 14px;
     padding-left: 10px;
     padding-bottom: 10px;
 }

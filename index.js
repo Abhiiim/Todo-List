@@ -180,6 +180,8 @@ function addNewItem () {
     let due_date = document.getElementById("date-picker").value;
     let priority = document.getElementById("priority-option").value;
     let reminder = document.getElementById("reminder").value;
+    let autoComplete = document.getElementById("auto-complete");
+    // console.log(autoComplete.checked);
 
     if (newWork.trim() !== "" && category.trim() !== "" && due_date.trim() !=="" && priority.trim() != "") {
 
@@ -200,23 +202,24 @@ function addNewItem () {
         } else {
 
 
-        let taskId = localStorage.getItem("taskId");
-        if (taskId === null) taskId = 1;
-        taskId = parseInt(taskId);
+            let taskId = localStorage.getItem("taskId");
+            if (taskId === null) taskId = 1;
+            taskId = parseInt(taskId);
 
-        taskItems.push({
-            id: taskId, 
-            title: newWork, 
-            category: category,
-            due_date: due_date,
-            priority: priority, 
-            isCompleted: false,
-            subtasks: subtasks, 
-            tags: tags, 
-            reminder: reminder
-        });
-        taskId++;
-        localStorage.setItem("taskId", taskId.toString());
+            taskItems.push({
+                id: taskId, 
+                title: newWork, 
+                category: category,
+                due_date: due_date,
+                priority: priority, 
+                isCompleted: false,
+                subtasks: subtasks, 
+                tags: tags, 
+                reminder: reminder,
+                autoComplete: autoComplete.checked
+            });
+            taskId++;
+            localStorage.setItem("taskId", taskId.toString());
         }
 
         subtasks = [];
@@ -345,7 +348,7 @@ function editItem (btn) {
 
     entryForm.scrollIntoView({
         behavior: 'smooth', 
-        block: 'start',    
+        top: "60px",    
     });
 
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
@@ -533,7 +536,9 @@ function addBacklogs () {
         let today = new Date();
         let taskDate = Date.parse(tasks[i].due_date);
         if (today > taskDate) {
-            backlogs.push(tasks[i]);
+            if (!tasks[i].autoComplete) {
+                backlogs.push(tasks[i]);
+            }
             tasks.splice(i, 1);
         }
     }
