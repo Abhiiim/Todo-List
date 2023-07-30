@@ -184,6 +184,22 @@ function addNewItem () {
     if (newWork.trim() !== "" && category.trim() !== "" && due_date.trim() !=="" && priority.trim() != "") {
 
         let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+
+
+        const entryForm = document.getElementById("entry-form");
+        const isEditing = entryForm.dataset.editing === "true";
+        const entryIndex = isEditing ? parseInt(entryForm.dataset.index) : -1;
+
+        if (isEditing) {
+            taskItems[entryIndex].title = newWork;
+            taskItems[entryIndex].category = category;
+            taskItems[entryIndex].due_date = due_date;
+            taskItems[entryIndex].priority = priority;
+            taskItems[entryIndex].reminder = reminder;
+            taskItems[entryIndex].subtasks.push(...subtasks);
+        } else {
+
+
         let taskId = localStorage.getItem("taskId");
         if (taskId === null) taskId = 1;
         taskId = parseInt(taskId);
@@ -200,12 +216,13 @@ function addNewItem () {
             reminder: reminder
         });
         taskId++;
+        localStorage.setItem("taskId", taskId.toString());
+        }
 
         subtasks = [];
         tags = [];
 
         localStorage.setItem("tasks", JSON.stringify(taskItems));
-        localStorage.setItem("taskId", taskId.toString());
 
         document.getElementById("category-option").value = "Category 1";
         document.getElementById("date-picker").value = "";
@@ -276,29 +293,60 @@ function deleteFromArray(id, taskList) {
 // Function for editing a Particular Item inline using the contentEditable property
 // And then update the title in the array
 function editItem (btn) {
-    var prtDiv = btn.parentNode.parentNode;
-    var para = prtDiv.querySelector("p");
-    if (para.contentEditable == 'true') {
-        para.contentEditable = 'false';
-        btn.innerHTML = "Edit";
-        btn.style.backgroundColor = "#059c3d";
-    } else  {
-        para.contentEditable = 'true';
-        para.focus();
-        btn.innerHTML = "Save";
-        btn.style.backgroundColor = "#007bff";
-    }
+    // var prtDiv = btn.parentNode.parentNode;
+    // var para = prtDiv.querySelector("p");
+    // if (para.contentEditable == 'true') {
+    //     para.contentEditable = 'false';
+    //     btn.innerHTML = "Edit";
+    //     btn.style.backgroundColor = "#059c3d";
+    // } else  {
+    //     para.contentEditable = 'true';
+    //     para.focus();
+    //     btn.innerHTML = "Save";
+    //     btn.style.backgroundColor = "#007bff";
+    // }
+
+    // let prevTitle = "";
+    // let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
+    // for (let i=0; i<taskItems.length; i++) {
+    //     if (taskItems[i].id == btn.id) {
+    //         prevTitle = taskItems[i].title;
+    //         taskItems[i].title = para.innerText;
+    //         break;
+    //     }
+    // }
+    // localStorage.setItem("tasks", JSON.stringify(taskItems));
+
+    // let activity = JSON.parse(localStorage.getItem("activity")) || [];
+    // activity.push("Edited a task with previous title " + prevTitle + " to new title " + para.innerText + " at " + getDateTime());
+    // localStorage.setItem("activity", JSON.stringify(activity));
+
 
     let prevTitle = "";
-    let taskItems = JSON.parse(localStorage.getItem("tasks")) || [];
-    for (let i=0; i<taskItems.length; i++) {
-        if (taskItems[i].id == btn.id) {
+    const entryForm = document.getElementById("entry-form");
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let task = {}, index = -1;
+    for (let i=0; i<tasks.length; i++) {
+        if (tasks[i].id == btn.id) {
+            task = tasks[i];
+            index = i;
             prevTitle = taskItems[i].title;
-            taskItems[i].title = para.innerText;
             break;
         }
     }
-    localStorage.setItem("tasks", JSON.stringify(taskItems));
+    document.getElementById("new-work").value = task.title;
+    document.getElementById("category-option").value = task.category;
+    document.getElementById("date-picker").value = task.due_date;
+    document.getElementById("priority-option").value = task.priority;
+    document.getElementById("reminder").value = task.reminder;
+
+    entryForm.dataset.editing = "true";
+    entryForm.dataset.index = index;
+
+    entryForm.scrollIntoView({
+        behavior: 'smooth', 
+        block: 'start',    
+    });
 
     let activity = JSON.parse(localStorage.getItem("activity")) || [];
     activity.push("Edited a task with previous title " + prevTitle + " to new title " + para.innerText + " at " + getDateTime());
