@@ -218,6 +218,8 @@ function addNewItem () {
         let activity = JSON.parse(localStorage.getItem("activity")) || [];
         activity.push("Added a new task with title " + newWork + " at " + getDateTime());
         localStorage.setItem("activity", JSON.stringify(activity));
+
+        location.reload(); // Reloading the page so that every other functions should work properly
     }
 }
 
@@ -491,7 +493,7 @@ function addBacklogs () {
     localStorage.setItem("backlogs", JSON.stringify(backlogs));
 }
 
-addBacklogs();
+setInterval(addBacklogs, 1000);
 
 function viewBacklogs () {
     let backlogs = JSON.parse(localStorage.getItem("backlogs")) || [];
